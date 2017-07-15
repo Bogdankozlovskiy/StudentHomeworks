@@ -21,6 +21,7 @@ void PrintHTML1(const char* text, int mask)
 
 union coding 
 {
+	int dig;
 	struct byt
 	{
 		unsigned char bold : 1;
@@ -54,15 +55,17 @@ union coding create(char sto,char hralign,bool underline,bool italic,bool bold)
 	return coddigit;
 }
 
-void printatribut(union coding digit)
+void printatribut(int digit)
 {
-	if (digit.bytes.bold)
+	union coding codigit;
+	codigit.dig = digit;
+	if (codigit.bytes.bold)
 		printf("<b>\n");//жирный стиль да/нет
-	if (digit.bytes.italic)
+	if (codigit.bytes.italic)
 		printf("<i>\n");//наклон да/нет
-	if (digit.bytes.underline)
+	if (codigit.bytes.underline)
 		printf("<ins>\n");//падчеркивание да/нет
-	switch (digit.bytes.hralign)
+	switch (codigit.bytes.hralign)
 	{
 	case(1):
 		printf("<hr align=\"left\">\n");//выравнивание слева
@@ -79,13 +82,13 @@ void printatribut(union coding digit)
 	default:
 		break;
 	}
-	printf("Size-%d\n", digit.bytes.sto);//размер шрифта
+	printf("Size-%d\n", codigit.bytes.sto);//размер шрифта
 }
 
 int main()
 {
 	PrintHTML1("ololo", 7);
 	union coding magicdigit=create(100,justify,underline_on,italic_on,bold_on);
-	printatribut(magicdigit);
+	printatribut(magicdigit.dig);
 	return 0;
 }
