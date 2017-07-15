@@ -21,7 +21,6 @@ void PrintHTML1(const char* text, int mask)
 
 union coding 
 {
-	int cod;
 	struct byt
 	{
 		unsigned char bold : 1;
