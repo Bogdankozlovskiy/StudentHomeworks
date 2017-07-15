@@ -19,35 +19,51 @@ void PrintHTML1(const char* text, int mask)
 		printf("</B>\n");
 }
 
-int create(char sto,char hralign,bool underline,bool italic,bool bold)
+union coding 
 {
-	int digit = 0;//упаковываем число
-	digit = digit | bold;
-	digit = digit << 1;
-	digit = digit | italic;
-	digit = digit << 1;
-	digit = digit | underline;
-	digit = digit << 3;
-	digit = digit | hralign;
-	digit = digit << 8;
-	digit = digit | sto;
-	return digit;
+	int cod;
+	struct byt
+	{
+		unsigned char bold : 1;
+		unsigned char italic : 1;
+		unsigned char underline : 1;
+		unsigned char hralign : 3;
+		unsigned char sto;
+	}bytes;
+};
+
+enum hr_align
+{
+	left = 1,
+	center = 2,
+	right = 3,
+	justify = 4
+};
+
+enum {bold_off,bold_on};
+enum {italic_off,italic_on};
+enum {underline_off,underline_on};
+
+union coding create(char sto,char hralign,bool underline,bool italic,bool bold)
+{
+	union coding coddigit;
+	coddigit.bytes.bold = bold;
+	coddigit.bytes.hralign = hralign;
+	coddigit.bytes.italic = italic;
+	coddigit.bytes.sto = sto;
+	coddigit.bytes.underline = underline;
+	return coddigit;
 }
 
-void printatribut(int digit)
+void printatribut(union coding digit)
 {
-	char sto = digit & 255;
-	char HorAlign = digit >> 8 & 7;
-	char underline = digit >> 11 & 1;
-	char italic = digit >> 12 & 1;
-	char bold = digit >> 13 & 1;
-	if (bold)
+	if (digit.bytes.bold)
 		printf("<b>\n");//жирный стиль да/нет
-	if (italic)
+	if (digit.bytes.italic)
 		printf("<i>\n");//наклон да/нет
-	if (underline)
+	if (digit.bytes.underline)
 		printf("<ins>\n");//падчеркивание да/нет
-	switch (HorAlign)
+	switch (digit.bytes.hralign)
 	{
 	case(1):
 		printf("<hr align=\"left\">\n");//выравнивание слева
@@ -64,13 +80,13 @@ void printatribut(int digit)
 	default:
 		break;
 	}
-	printf("Size-%d\n", sto);//размер шрифта
+	printf("Size-%d\n", digit.bytes.sto);//размер шрифта
 }
 
 int main()
 {
 	PrintHTML1("ololo", 7);
-	int magicdigit=create(100,2,1,1,1);
+	union coding magicdigit=create(100,justify,underline_on,italic_on,bold_on);
 	printatribut(magicdigit);
 	return 0;
 }
