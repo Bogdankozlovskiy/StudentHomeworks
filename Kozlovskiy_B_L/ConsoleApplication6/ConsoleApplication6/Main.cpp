@@ -35,16 +35,16 @@ union coding
 enum hr_align
 {
 	left = 1,
-	center = 2,
-	right = 3,
-	justify = 4
+	center,
+	right,
+	justify
 };
 
 enum {bold_off,bold_on};
 enum {italic_off,italic_on};
 enum {underline_off,underline_on};
 
-union coding create(char sto,char hralign,bool underline,bool italic,bool bold)
+int create(char sto,char hralign,bool underline,bool italic,bool bold)
 {
 	union coding coddigit;
 	coddigit.bytes.bold = bold;
@@ -52,7 +52,7 @@ union coding create(char sto,char hralign,bool underline,bool italic,bool bold)
 	coddigit.bytes.italic = italic;
 	coddigit.bytes.sto = sto;
 	coddigit.bytes.underline = underline;
-	return coddigit;
+	return coddigit.dig;
 }
 
 void printatribut(int digit)
@@ -88,7 +88,7 @@ void printatribut(int digit)
 int main()
 {
 	PrintHTML1("ololo", 7);
-	union coding magicdigit=create(100,justify,underline_on,italic_on,bold_on);
-	printatribut(magicdigit.dig);
+	int magicdigit=create(100,right,underline_on,italic_on,bold_on);
+	printatribut(magicdigit);
 	return 0;
 }
